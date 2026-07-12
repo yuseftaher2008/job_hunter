@@ -1,0 +1,27 @@
+{
+  "name": "job_hunter",
+  "version": "1.0.0",
+  "description": "this is an ai job hunter to help u land your first job",
+  "license": "ISC",
+  "author": "Yusef Taher",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev" : "tsx watch src/server.ts",
+    "build" : "tsc",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "pg": "^8.22.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.13.3",
+    "@types/pg": "^8.20.0",
+    "tsx": "^4.23.0",
+    "typescript": "^7.0.2"
+  }
+}
