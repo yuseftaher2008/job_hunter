@@ -15,3 +15,8 @@ export async function createUser (userData :createUserData){
   
   }
         
+export async function findUserByEmail (email:string){
+    const user = await pool.query (`SELECT * FROM users WHERE email = $1`,[email])
+    return user.rows[0]
+
+}
