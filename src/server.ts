@@ -1,12 +1,12 @@
 import  express  from "express";
-import type {Express,Request,Response} from 'express'
+import type {Express} from 'express'
 import "dotenv/config";
+import { authRouter } from "./routes/authRouter.js";
 
 const app : Express = express()
 const PORT  = process.env.PORT || 3000
 
-app.get('/',(req:Request,res:Response)=> {
-    res.json(`runing`)
-})
+app.use(express.json())
+app.use('/api/auth',authRouter)
 
 app.listen(PORT,()=> console.log(`runing on port ${PORT}`))
