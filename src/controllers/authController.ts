@@ -1,5 +1,5 @@
 import type { Request,Response } from 'express';
-import { createUser,findAuthProvider,findUserByEmail } from '../models/userModel.js';
+import { createUser,findAuthProvider,findUserByEmail, findUserById,createAuthProvider } from '../models/userModel.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import "dotenv/config";
@@ -88,10 +88,36 @@ try{
         return res.status(400).json({message:"server error"})
     }
     const profile = await profileResponse.json()
-    const exisitingAuth = await findAuthProvider("linkedin",profile.sub)
-    if(exisitingAuth){
+    const existingAuth = await findAuthProvider("linkedin",profile.sub)
+    let user
+    if(existingAuth){
+        user = await findUserById(existingAuth.user_id)
+    } else {
+    const newUser = await createUser({
+        name: profile.name,
+        email: profile.email,
         
-    }
+    })
+    
+    await createAuthProvider({
+        user_id: newUser.id,
+        provider: 'linkedin',
+        provider_user_id: profile.sub,
+        access_token: result.access_token
+    })
+    
+    user = newUser
+
+}
+    const payload  = {id : user.id}
+    const secretKey:string = process.env.JWT_SECRET as string
+    const token:string = jwt.sign(payload,secretKey , {
+        expiresIn: '1h'
+        })    
+    res.json({
+        message:"user signed in throught linkedin",
+        "token":token
+    })    
 }catch(err){
     return res.status(500).json({message : "server error"})
 }

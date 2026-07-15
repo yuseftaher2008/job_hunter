@@ -4,10 +4,10 @@ import {pool} from "../config/db.js"
 type createUserData = {
     name:string
     email:string
-    title:string
-    experience_level:string
+    title?:string
+    experience_level?:string
     cv_link?:string
-    password:string
+    password?:string
 }
 type createAuthProviderData = {
     user_id:number
@@ -44,5 +44,6 @@ export async function createAuthProvider(data:createAuthProviderData){
 }
 
 export async function findUserById(id:number){
-    
+    const result = await pool.query(`SELECT * FROM users WHERE id=$1`,[id])
+    return result.rows[0]
 }
