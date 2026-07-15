@@ -1,8 +1,9 @@
 import type { Request,Response } from 'express';
-import { createUser,findUserByEmail } from '../models/userModel.js';
+import { createUser,findAuthProvider,findUserByEmail } from '../models/userModel.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import "dotenv/config";
+
 
 
 export async function userRegister (req:Request,res:Response) {
@@ -21,7 +22,7 @@ export async function userRegister (req:Request,res:Response) {
     }
 }
 
-export async function userLogin (req:Request,res:Response){
+export async function userLogin (req:Request,res:Response) {
     const {email,password} = req.body
     if (!email || !password){
         return res.status(400).json({message:"all fields are required"})
@@ -47,4 +48,51 @@ export async function userLogin (req:Request,res:Response){
     } catch (err) {
         return res.status(500).json({message:"server error"})
     }
+}
+
+export async function linkedinRedirect (req:Request,res:Response) {
+const redirectUrl:string = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${process.env.LINKEDIN_CLIENT_ID}&redirect_uri=${process.env.LINKEDIN_REDIRECT_URI}&scope=openid%20profile%20email`
+res.redirect(redirectUrl)
+}
+
+export async function linkedinCallback (req:Request,res:Response) {
+
+const code = req.query.code
+try{
+
+    const params = new URLSearchParams({
+        grant_type: "authorization_code",
+        code: code as string,
+        client_id: process.env.LINKEDIN_CLIENT_ID as string,
+        client_secret: process.env.LINKEDIN_CLIENT_SECRET as string,
+        redirect_uri: process.env.LINKEDIN_REDIRECT_URI as string
+    })
+
+    const response = await fetch("https://www.linkedin.com/oauth/v2/accessToken",{
+        method:"POST",
+        body:params,
+        headers:{"Content-Type": "application/x-www-form-urlencoded"}
+    })
+    if(!response.ok){
+        return res.status(400).json({message:"invalid credentials"})
+    }
+    const result = await response.json()
+    const profileResponse = await fetch("https://api.linkedin.com/v2/userinfo", {
+    method: "GET",
+    headers: {
+        Authorization: `Bearer ${result.access_token}`
+    }
+    
+})
+    if(!profileResponse.ok){
+        return res.status(400).json({message:"server error"})
+    }
+    const profile = await profileResponse.json()
+    const exisitingAuth = await findAuthProvider("linkedin",profile.sub)
+    if(exisitingAuth){
+        
+    }
+}catch(err){
+    return res.status(500).json({message : "server error"})
+}
 }

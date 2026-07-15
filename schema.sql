@@ -1,9 +1,10 @@
+
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     email TEXT unique NOT NULL,
-    title TEXT NOT NULL,
-    experience_level TEXT NOT NULL,
+    title TEXT ,
+    experience_level TEXT ,
     password TEXT,
     cv_link TEXT 
 );
@@ -56,3 +57,5 @@ CREATE TABLE IF NOT EXISTS auth_providers(
     UNIQUE (provider,provider_user_id),
     FOREIGN KEY (user_id) REFERENCES users (id)
 );
+
+
