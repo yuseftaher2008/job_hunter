@@ -1,5 +1,4 @@
-
-import {pool} from "../config/db.js"
+import {pool} from "../config/db.js";
 
 type createUserData = {
     name:string
@@ -16,6 +15,7 @@ type createAuthProviderData = {
     access_token:string
     expired_at?:Date
 }
+
 
 export async function createUser (userData :createUserData){
     

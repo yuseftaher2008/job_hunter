@@ -22,8 +22,8 @@ CREATE TABLE IF NOT EXISTS user_skills (
 );
 CREATE TABLE IF NOT EXISTS jobs (
     id SERIAL PRIMARY KEY,
-    link TEXT NOT NULL,
-    title TEXT UNIQUE NOT NULL,
+    link TEXT UNIQUE NOT NULL,
+    title TEXT NOT NULL,
     date DATE,
     experience_level TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
